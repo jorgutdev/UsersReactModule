@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { Provider } from 'react-redux'
 import RootContainer from './RootContainer'
 import createStore from '../Redux'
+import {GoogleSignin} from 'react-native-google-signin';
 
 // create our store
 const store = createStore()
@@ -18,6 +19,15 @@ const store = createStore()
  * We separate like this to play nice with React Native's hot reloading.
  */
 class App extends Component {
+
+  componentDidMount = () => {
+    GoogleSignin.configure({
+      webClientId: '361692311027-d28n6a0svivlndt1mjnf2hmok9abu5h9.apps.googleusercontent.com',
+      offlineAccess: true
+    });
+  }
+  
+
   render () {
     return (
       <Provider store={store}>
