@@ -6,7 +6,11 @@ import styles from './Styles/LaunchScreenStyles'
 import { connect } from "react-redux";
 import UserActions from "../Redux/UserRedux";
 import { GoogleSigninButton } from "react-native-google-signin";
-
+const FBSDK = require('react-native-fbsdk');
+const {
+  LoginButton,
+  AccessToken
+} = FBSDK;
 export class LaunchScreen extends Component {
 
 
@@ -35,6 +39,32 @@ export class LaunchScreen extends Component {
     color={GoogleSigninButton.Color.Dark}
     onPress={this._signIn.bind(this)}/>
   <Text>{ JSON.stringify(this.props.user )}</Text>
+
+  <LoginButton
+          publishPermissions={["publish_actions"]}
+          onLoginFinished={
+            (error, result) => {
+              if (error) {
+                alert("login has error: " + result.error);
+              } else if (result.isCancelled) {
+                alert("login is cancelled.");
+              } else {
+                AccessToken.getCurrentAccessToken().then(
+                  (data) => {
+                    alert(data.accessToken.toString())
+                  }
+                )
+              }
+            }
+          }
+          onLogoutFinished={() => alert("logout.")}/>
+
+
+
+
+
+
+
           </View>
 
 
