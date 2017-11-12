@@ -4,38 +4,37 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  userRequest: ['username'],
-  userSuccess: ['avatar'],
+  userRequest: null,
+  userSuccess: ['user'],
   userFailure: null
 })
 
-export const GithubTypes = Types
+export const UserTypes = Types
 export default Creators
 
 /* ------------- Initial State ------------- */
 
 export const INITIAL_STATE = Immutable({
-  avatar: null,
   fetching: null,
   error: null,
-  username: null
-})
+  user: null
+}, { deep: true })
 
 /* ------------- Reducers ------------- */
 
 // request the avatar for a user
-export const request = (state, { username }) =>
-  state.merge({ fetching: true, username, avatar: null })
-
+export const request = (state) => {
+  return state.merge({ fetching: true })
+}
 // successful avatar lookup
 export const success = (state, action) => {
-  const { avatar } = action
-  return state.merge({ fetching: false, error: null, avatar })
+  return state.merge({ user: action.user })
 }
 
 // failed to get the avatar
-export const failure = (state) =>
-  state.merge({ fetching: false, error: true, avatar: null })
+export const failure = (state) => {
+  return state;
+}
 
 /* ------------- Hookup Reducers To Types ------------- */
 

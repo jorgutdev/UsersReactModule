@@ -1,63 +1,40 @@
 import React, { Component } from 'react'
 import { ScrollView, Text, Image, View } from 'react-native'
 import { Images } from '../Themes'
-import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
-import firebase from 'react-native-firebase'
 // Styles
 import styles from './Styles/LaunchScreenStyles'
+import { connect } from "react-redux";
+import UserActions from "../Redux/UserRedux";
+import { GoogleSigninButton } from "react-native-google-signin";
 
-export default class LaunchScreen extends Component {
+export class LaunchScreen extends Component {
 
 
 
   _signIn(){
-    GoogleSignin.signIn()
-    .then((user) => {
-      console.log(user);
-
-      let googleProvider = new firebase.auth().GoogleAuthProvider;
-      const cred = firebase.auth.GoogleAuthProvider.credential(
-        user.idToken,
-        user.accessToken
-      )
-
-      firebase.auth().signInWithCredential(cred).then(
-        (fireUser) => {
-          console.log('firebase user ->', fireUser)
-          this.setState({ user });
-        }
-      )
-    }).catch((err) => {
-      console.log('WRONG SIGNIN', err);
-    });
+    this.props.request();
 
   }
 
   render () {
-
-    let user = !!this.state ? this.state.user : null;
-    var avatar
-    if(user){
-      avatar = <Image source={user.photoURL}></Image>
-    }
+    let avatar = this.props.user ? (<Image source={{ uri: this.props.user.photoURL}}  style={styles.logo} />) : null;
 
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
           <View style={styles.centered}>
-            <Image source={Images.launch} style={styles.logo} />
+          { avatar }
           </View>
 
           <View style={styles.section} >
-            { avatar }
 
             <GoogleSigninButton
     style={{width: 48, height: 48}}
     size={GoogleSigninButton.Size.Icon}
     color={GoogleSigninButton.Color.Dark}
     onPress={this._signIn.bind(this)}/>
-
+  <Text>{ JSON.stringify(this.props.user )}</Text>
           </View>
 
 
@@ -67,3 +44,13 @@ export default class LaunchScreen extends Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  user : state.user.user
+})
+ // wraps dispatch to create nicer functions to call within our component
+const mapDispatchToProps = dispatch => ({
+  request: () => dispatch(UserActions.userRequest())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LaunchScreen);
