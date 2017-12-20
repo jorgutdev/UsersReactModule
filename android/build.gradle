@@ -16,6 +16,11 @@ buildscript {
     }
 }
 
+
+def versionOverrides = [
+        "com.facebook.android:facebook-android-sdk": "4.22.1",
+]
+
 allprojects {
     repositories {
         mavenLocal()
@@ -27,5 +32,20 @@ allprojects {
         maven {
             url "https://maven.google.com"
         }
+            /* your original repository dependencies here... */
+    configurations.all {
+
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+
+            def overrideVersion = versionOverrides[details.requested.group + ":" + details.requested.name]
+
+            if (overrideVersion != null && details.requested.version != overrideVersion) {
+                println("********************************************************")
+                println("Overriding dependency ${details.requested.group}:${details.requested.name} version ${details.requested.version} --> $overrideVersion")
+                details.useVersion overrideVersion
+                println("********************************************************")
+            }
+        }
+    }
     }
 }
